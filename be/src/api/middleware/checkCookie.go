@@ -14,16 +14,10 @@ type Claims struct {
 
 func CheckCookie(c *gin.Context) {
 	// Request for cookie
-	cookie, err := c.Cookie("token")
+	cookie, err := c.Cookie("jwt-cookie")
 	if err != nil {
-		if err == http.ErrNoCookie {
-			c.AbortWithStatusJSON(http.StatusUnauthorized,
-				gin.H{"code": http.StatusUnauthorized, "message": "Unauthorized User, cookie not found"})
-			return
-		}
 		c.AbortWithStatusJSON(http.StatusUnauthorized,
-			gin.H{"code": http.StatusBadRequest, "message": "Bad Request"})
-		return
+			gin.H{"code": http.StatusUnauthorized, "message": "Unauthorized User, cookie not found"})
 	}
 
 	// ParsewithClaims
@@ -34,13 +28,8 @@ func CheckCookie(c *gin.Context) {
 	})
 
 	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized,
-				gin.H{"code": http.StatusUnauthorized, "message": "Unauthorized User"})
-			return
-		}
 		c.AbortWithStatusJSON(http.StatusUnauthorized,
-			gin.H{"code": http.StatusBadRequest, "message": "Bad Request"})
+			gin.H{"code": http.StatusUnauthorized, "message": "Unauthorized User"})
 		return
 	}
 

@@ -58,9 +58,7 @@ func Login(c *gin.Context) {
 			return
 		}
 
-		nowTime := time.Now()
-		expireTime := nowTime.Add(1 * time.Hour)
-
+		expireTime := time.Now().Add(1 * time.Hour)
 		// New token with signing method and claims
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 			Issuer:    username, // MySQL > Accounts Table > username
@@ -75,12 +73,12 @@ func Login(c *gin.Context) {
 			return
 		}
 
-		// Set cookie
-		c.SetCookie("token", tokenString, 10, "/", "localhost", false, true)
+		// Set cookie (MaxAge: 1 hour = 3600)
+		c.SetCookie("jwt-cookie", tokenString, 3600, "/", "localhost", false, true)
 
 		c.JSON(200, gin.H{
-			"code":  200,
-			"token": tokenString,
+			"code":       200,
+			"jwt-cookie": tokenString,
 		})
 	}
 
